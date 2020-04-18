@@ -1,4 +1,5 @@
 import random
+import traceback
 from .constants import GameConstants
 from .robot import Robot
 from .robottype import RobotType
@@ -6,12 +7,12 @@ from .team import Team
 
 class Game:
     def __init__(self, code, board_size=GameConstants.BOARD_SIZE, max_rounds=GameConstants.MAX_ROUNDS, 
-                 seed=GameConstants.DEFAULT_SEED, sensor_radius=2, logs=False):
+                 seed=GameConstants.DEFAULT_SEED, sensor_radius=2, debug=False):
         random.seed(seed)
 
         self.code = code
 
-        self.logs = logs
+        self.debug = debug
         self.running = True
         self.winner = None
 
@@ -43,7 +44,6 @@ class Game:
         self.overlord_methods.update(self.shared_methods)
         self.pawn_methods.update(self.shared_methods)
 
-        self.lords = []
         self.new_robot(None, None, Team.WHITE, RobotType.OVERLORD)
         self.new_robot(None, None, Team.BLACK, RobotType.OVERLORD)
 
@@ -63,18 +63,19 @@ class Game:
                     methods = self.overlord_methods
                 else:
                     methods = self.pawn_methods
-                
-                if self.robot.team == Team.WHITE:
-                    self.code[0].do_turn(methods)
-                else:
-                    self.code[1].do_turn(methods)
+
+                try:
+                    if self.robot.team == Team.WHITE:
+                        self.code[0].do_turn(methods)
+                    else:
+                        self.code[1].do_turn(methods)
+                except Exception as e:
+                    if debug:
+                        traceback.print_exc()
                 self.check_over()
 
         if self.running:
-            for robot in self.lords:
-                robot.turn()
-
-            self.lords.reverse()  # the HQ's will alternate spawn order
+            self.queue[0], self.queue[1] = self.queue[1], self.queue[0] # Alternate spawn order of Overlords
             self.board_states.append([row[:] for row in self.board])
 
     def new_robot(self, row, col, team, robot_type):
@@ -102,7 +103,13 @@ class Game:
         if self.round > self.max_rounds:
             self.running = False
             if white == black:
-                self.winner = random.choice([Team.WHITE, Team.BLACK])
+                piece_diff = sum(sum([1 if piece.team == Team.WHITE else -1 for piece in row if piece]) for row in self.board)
+                if piece_diff > 0:
+                    self.winner = Team.WHITE
+                elif piece.diff < 0:
+                    self.winner = Team.BLACK
+                else:
+                    self.winner = random.choice([Team.WHITE, Team.BLACK])
             else:
                 self.winner = Team.WHITE if white > black else Team.BLACK
 
@@ -128,7 +135,8 @@ class Game:
 
     ### GENERAL METHODS ###
     def log(self, *args, **kwargs):
-        print(*args, **kwargs)
+        if self.debug:
+            print(*args, **kwargs)
     
     def get_board_size(self):
         return self.board_size

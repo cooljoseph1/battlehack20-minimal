@@ -14,6 +14,7 @@ def deepcopy(item):
 class CodeContainer:
     def __init__(self, code):
         self.code = code
+        self.code = compile(code, "<string>", "exec")
 
     def do_turn(self, methods):
         globals = {}
