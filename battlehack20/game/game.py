@@ -8,6 +8,7 @@ from .team import Team
 class Game:
     def __init__(self, code, board_size=GameConstants.BOARD_SIZE, max_rounds=GameConstants.MAX_ROUNDS, 
                  seed=GameConstants.DEFAULT_SEED, sensor_radius=2, debug=False):
+        
         random.seed(seed)
 
         self.code = code
@@ -100,6 +101,10 @@ class Game:
             if self.board[0][col] and self.board[0][col].team == Team.BLACK: black += 1
             if self.board[self.board_size - 1][col] and self.board[self.board_size - 1][col].team == Team.WHITE: white += 1
 
+        # End the game in the case of three turns where nothing changes
+        if self.round >= 3 and self.board_states[-1] == self.board_states[-2] == self.board_states[-3]:
+            self.round = self.max_rounds + 1
+        
         if self.round > self.max_rounds:
             self.running = False
             if white == black:
