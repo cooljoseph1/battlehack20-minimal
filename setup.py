@@ -6,7 +6,7 @@ This is a fancy viewer for the Battlehack20 game.
 Read more at the Battlehack website: https://bh2020.battlecode.org.
 """
 
-setup(name='battlehack20-minimalengine',
+setup(name='battlehack20-minimal',
       version="1.0.0",
       description='Battlehack 2020 fancy viewer.',
       author='cooljoseph',
