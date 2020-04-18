@@ -2,7 +2,7 @@ import time
 import sys
 import datetime
 
-from .team import Team
+from ..game.team import Team
 
 class BasicViewer:
     def __init__(self, board_size, board_states, colors=True):

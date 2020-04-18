@@ -19,10 +19,7 @@ setup(name='battlehack20-minimal',
           ('Code', 'https://github.com/programjames/battlehack2020/battlehack20-minimalengine'),
           ('Documentation', 'https://github.com/programjames/battlehack2020/battlehack20-minimalengine')
       )),
-      install_requires=[
-            'battlehack20',
-            'pillow==7.0.0'
-      ],
+      install_requires=[],
       python_requires='>=3, <3.8',
       zip_safe=False,
       include_package_data=True

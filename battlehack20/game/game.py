@@ -1,4 +1,6 @@
-from .game_constants import GameConstants
+import random
+from .constants import GameConstants
+from .robot import Robot
 from .robottype import RobotType
 from .team import Team
 
@@ -48,9 +50,6 @@ class Game:
         
         self.board_states = []
 
-        if self.debug:
-            print(f"Seed: {seed}")
-
     def turn(self):
         self.round += 1
 
@@ -79,14 +78,16 @@ class Game:
             self.board_states.append([row[:] for row in self.board])
 
     def new_robot(self, row, col, team, robot_type):
-        robot = Robot(row, col, team, id, robot_type)
-        self.queue[self.robot_count] = robot
-        self.board[robot.row][robot.col] = robot
+        robot = Robot(row, col, team, self.robot_count, robot_type)
+        self.queue[robot.id] = robot
+        if robot.type != RobotType.OVERLORD:
+            self.board[robot.row][robot.col] = robot
         self.robot_count += 1
 
     def delete_robot(self, i):
         robot = self.queue[i]
-        self.board[robot.row][robot.col] = None
+        if robot.type != RobotType.OVERLORD:
+            self.board[robot.row][robot.col] = None
         del self.queue[i]
 
     def is_on_board(self, row, col):
@@ -154,7 +155,7 @@ class Game:
     ### PAWN METHODS ###
     
     def capture(self, new_row, new_col):
-        self.delete_robot(self.board[new_row][new_col])
+        self.delete_robot(self.board[new_row][new_col].id)
         self.board[new_row][new_col] = self.robot
         self.board[self.robot.row][self.robot.col] = None
         self.robot.row = new_row
