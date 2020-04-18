@@ -70,7 +70,7 @@ class Game:
                     else:
                         self.code[1].do_turn(methods)
                 except Exception as e:
-                    if debug:
+                    if self.debug:
                         traceback.print_exc()
                 self.check_over()
 
@@ -106,7 +106,7 @@ class Game:
                 piece_diff = sum(sum([1 if piece.team == Team.WHITE else -1 for piece in row if piece]) for row in self.board)
                 if piece_diff > 0:
                     self.winner = Team.WHITE
-                elif piece.diff < 0:
+                elif piece_diff < 0:
                     self.winner = Team.BLACK
                 else:
                     self.winner = random.choice([Team.WHITE, Team.BLACK])
