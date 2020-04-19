@@ -9,7 +9,7 @@ Read more at the Battlehack website: https://bh2020.battlecode.org.
 """
 
 setup(name='battlehack20-minimal',
-      version="1.0.3",
+      version="1.0.4",
       description='Battlehack 2020 fancy viewer.',
       author='cooljoseph',
       long_description=long_description,
@@ -18,8 +18,8 @@ setup(name='battlehack20-minimal',
       license='GNU General Public License v3.0',
       packages=find_packages(),
       project_urls=OrderedDict((
-          ('Code', 'https://github.com/programjames/battlehack2020/battlehack20-minimalengine'),
-          ('Documentation', 'https://github.com/programjames/battlehack2020/battlehack20-minimalengine')
+          ('Code', 'https://github.com/cooljoseph1/battlehack20-minimal'),
+          ('Documentation', 'https://github.com/cooljoseph1/battlehack20-minimal')
       )),
       install_requires=[],
       python_requires='>=3, <3.8',
