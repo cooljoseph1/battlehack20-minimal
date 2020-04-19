@@ -1,6 +1,7 @@
 import random
 import traceback
 from .constants import GameConstants
+from ..container.runner import Runner
 from .robot import Robot
 from .robottype import RobotType
 from .team import Team
@@ -60,16 +61,9 @@ class Game:
         for i in range(self.robot_count):
             if i in self.queue:
                 self.robot = self.queue[i]
-                if self.robot.type == RobotType.OVERLORD:
-                    methods = self.overlord_methods
-                else:
-                    methods = self.pawn_methods
 
                 try:
-                    if self.robot.team == Team.WHITE:
-                        self.code[0].do_turn(methods)
-                    else:
-                        self.code[1].do_turn(methods)
+                    self.robot.runner.do_turn()
                 except Exception as e:
                     if self.debug:
                         traceback.print_exc()
@@ -80,10 +74,16 @@ class Game:
             self.board_states.append([row[:] for row in self.board])
 
     def new_robot(self, row, col, team, robot_type):
-        robot = Robot(row, col, team, self.robot_count, robot_type)
+        methods = self.overlord_methods if robot_type == RobotType.OVERLORD else self.pawn_methods
+        code = self.code[0] if team == Team.WHITE else self.code[1]
+        runner = Runner(code, methods)
+        
+        robot = Robot(row, col, team, self.robot_count, robot_type, runner)
+        
         self.queue[robot.id] = robot
         if robot.type != RobotType.OVERLORD:
             self.board[robot.row][robot.col] = robot
+        
         self.robot_count += 1
 
     def delete_robot(self, i):
