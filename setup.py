@@ -2,12 +2,14 @@ from setuptools import setup, find_packages
 from collections import OrderedDict
 
 long_description="""
-This is a fancy viewer for the Battlehack20 game.
+This is a minimal engine for the Battlehack20 game.
+It lacks the secure of the original engine, but makes up for it
+by running 30 times faster.
 Read more at the Battlehack website: https://bh2020.battlecode.org.
 """
 
 setup(name='battlehack20-minimal',
-      version="1.0.1",
+      version="1.0.2",
       description='Battlehack 2020 fancy viewer.',
       author='cooljoseph',
       long_description=long_description,
