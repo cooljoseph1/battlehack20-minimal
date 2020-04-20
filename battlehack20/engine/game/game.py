@@ -102,8 +102,8 @@ class Game:
             if self.board[self.board_size - 1][col] and self.board[self.board_size - 1][col].team == Team.WHITE: white += 1
 
         # End the game in the case of three turns where nothing changes
-##        if self.round >= 4 and self.board_states[-1] == self.board_states[-2] == self.board_states[-3]:
-##            self.round = self.max_rounds + 1
+        #if self.round >= 4 and self.board_states[-1] == self.board_states[-2] == self.board_states[-3]:
+        #    self.round = self.max_rounds + 1
         
         if self.round > self.max_rounds:
             self.running = False
