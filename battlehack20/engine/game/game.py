@@ -20,7 +20,6 @@ class Game:
 
         self.robot_count = 0
         self.queue = {}
-        self.leaders = []
 
         self.sensor_radius = sensor_radius
         self.board_size = board_size
@@ -46,6 +45,7 @@ class Game:
         self.overlord_methods.update(self.shared_methods)
         self.pawn_methods.update(self.shared_methods)
 
+        self.lords = []
         self.new_robot(None, None, Team.WHITE, RobotType.OVERLORD)
         self.new_robot(None, None, Team.BLACK, RobotType.OVERLORD)
 
@@ -70,7 +70,14 @@ class Game:
                 self.check_over()
 
         if self.running:
-            self.queue[0], self.queue[1] = self.queue[1], self.queue[0] # Alternate spawn order of Overlords
+            for robot in self.lords:
+                self.robot = robot
+                try:
+                    self.robot.runner.do_turn()
+                except Exception as e:
+                    if self.debug:
+                        traceback.print_exc()
+            self.lords.reverse()
             self.board_states.append([row[:] for row in self.board])
 
     def new_robot(self, row, col, team, robot_type):
@@ -80,9 +87,11 @@ class Game:
         
         robot = Robot(row, col, team, self.robot_count, robot_type, runner)
         
-        self.queue[robot.id] = robot
-        if robot.type != RobotType.OVERLORD:
+        if robot.type == RobotType.PAWN:        
+            self.queue[robot.id] = robot
             self.board[robot.row][robot.col] = robot
+        else:
+            self.lords.append(robot)
         
         self.robot_count += 1
 
