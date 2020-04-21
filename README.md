@@ -13,3 +13,8 @@ $ pip uninstall battlehack20
 ```
 Most things should be able to be run the same as with the original `battlehack20`,
 but much faster and without a sandbox.
+
+### Known Issues
+A few things are not implemented in the minimalengine.  These include
+* bytecode
+* the minimalengine does not log as much as the original
