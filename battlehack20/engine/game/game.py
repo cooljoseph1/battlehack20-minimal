@@ -8,10 +8,9 @@ from .team import Team
 
 class Game:
     def __init__(self, code, board_size=GameConstants.BOARD_SIZE, max_rounds=GameConstants.MAX_ROUNDS, 
-                 seed=GameConstants.DEFAULT_SEED, sensor_radius=2, debug=False):
+                 seed=GameConstants.DEFAULT_SEED, sensor_radius=2, debug=False, random_pieces=0):
         
         random.seed(seed)
-
         self.code = code
 
         self.debug = debug
@@ -52,6 +51,8 @@ class Game:
         
         self.board_states = []
 
+        self.add_random_pieces(random_pieces)
+
     def turn(self):
         self.round += 1
 
@@ -79,6 +80,15 @@ class Game:
                         traceback.print_exc()
             self.lords.reverse()
             self.board_states.append([row[:] for row in self.board])
+
+    def add_random_pieces(self, num):
+        for i in range(num):
+            col1 = random.randrange(self.board_size)
+            row1 = random.randrange(0, self.board_size - self.board_size//3)
+            self.new_robot(row1, col1, Team.WHITE, RobotType.PAWN)
+            col2 = random.randrange(self.board_size)
+            row2 = random.randrange(self.board_size//3, self.board_size)
+            self.new_robot(row2, col2, Team.BLACK, RobotType.PAWN)
 
     def new_robot(self, row, col, team, robot_type):
         methods = self.overlord_methods if robot_type == RobotType.OVERLORD else self.pawn_methods
@@ -111,8 +121,8 @@ class Game:
             if self.board[self.board_size - 1][col] and self.board[self.board_size - 1][col].team == Team.WHITE: white += 1
 
         # End the game in the case of three turns where nothing changes
-        #if self.round >= 4 and self.board_states[-1] == self.board_states[-2] == self.board_states[-3]:
-        #    self.round = self.max_rounds + 1
+        if self.round >= 4 and self.board_states[-1] == self.board_states[-2] == self.board_states[-3]:
+            self.round = self.max_rounds + 1
         
         if self.round > self.max_rounds:
             self.running = False
@@ -149,6 +159,25 @@ class Game:
         for i in range(self.robot_count):
             if i in self.queue:
                 self.delete_robot(i)
+
+    def get_score(self):
+        board = self.board_states[-1]
+        white_points = 0
+        for row in range(self.board_size//2, self.board_size):
+            for col in range(self.board_size):
+                if board[row][col] and board[row][col].team == Team.WHITE:
+                    white_points += row - self.board_size//2 + 1
+
+        black_points = 0
+        for row in range(0, self.board_size//2):
+            for col in range(self.board_size):
+                if board[row][col] and board[row][col].team == Team.BLACK:
+                    black_points += self.board_size//2 - row
+        
+        if white_points == black_points == 0:
+            return 0.5
+        return white_points / (white_points + black_points)
+        
 
     ### GENERAL METHODS ###
     def log(self, *args, **kwargs):
